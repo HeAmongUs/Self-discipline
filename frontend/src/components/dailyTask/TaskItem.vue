@@ -12,7 +12,7 @@
     >
       <div class="task-control-container">
         <label
-          @click="completeTask()"
+          @click="completeTask"
           :class="[
             task.completed
               ? 'task-control-checkbox-disabled'
@@ -57,14 +57,24 @@
           >
             {{ task.title }}
           </h3>
-          <div class="task-dropdown">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 16">
-              <path
-                fill-rule="evenodd"
-                d="M2 4a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"
-              ></path>
-            </svg>
-          </div>
+          <my-dropdown>
+            <template v-slot:content>
+              <ul>
+                <li @click="updateTask">
+                  <span class="button">
+                    <i class="tiny left material-icons">mode_edit</i>
+                    Update
+                  </span>
+                </li>
+                <li @click="deleteTask">
+                  <span class="button">
+                    <i class="tiny left material-icons">delete</i>
+                    Delete
+                  </span>
+                </li>
+              </ul>
+            </template>
+          </my-dropdown>
         </div>
         <p class="task-content__description">{{ task.description }}</p>
       </div>
@@ -98,29 +108,43 @@
 </template>
 
 <script>
+import MyDropdown from "../UI/MyDropdown"
 export default {
   name: "TaskItem",
+  components: { MyDropdown },
+
   props: {
     task: {
       type: Object,
       required: true,
     },
   },
+  emits: ["completeTask", "updateTask", "deleteTask"],
   methods: {
-    async completeTask() {
-      // eslint-disable-next-line vue/no-mutating-props
-      this.task.completed = !this.task.completed
-
-      await this.$api.dailyTask.complete(this.task.id, {
-        daily_task: this.task.id,
-        value: this.task.completed,
-      })
+    completeTask() {
+      this.$emit("completeTask", this.task)
+    },
+    updateTask() {
+      this.$emit("updateTask", this.task.id)
+    },
+    deleteTask() {
+      this.$emit("deleteTask", this.task.id)
     },
   },
 }
 </script>
 
 <style scoped lang="scss">
+.dropdown {
+  span {
+    color: dodgerblue !important;
+  }
+}
+span.button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 .task {
   $task: &;
   &-list-item {
@@ -130,10 +154,10 @@ export default {
     border: 1px solid transparent;
 
     &:hover {
-      #{$task}-dropdown {
+      .dropdown {
         opacity: 1;
       }
-      border: 1px solid #6610f2;
+      border: 1px solid dodgerblue;
     }
 
     &:not(:first-child) {
@@ -248,16 +272,6 @@ export default {
             }
           }
         }
-      }
-    }
-    #{$task}-dropdown {
-      transition: 0.3s;
-      opacity: 0;
-      border: 1px solid transparent;
-      margin: 0 8px;
-
-      svg {
-        width: 4px;
       }
     }
   }

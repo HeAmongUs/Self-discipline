@@ -1,27 +1,27 @@
 <template>
   <ul class="task-list">
-    <task-input @enter="(taskTitle) => addNewTask(taskTitle)" />
     <span v-if="taskList.length === 0">Задач нет</span>
     <task-item
       v-else
-      v-for="task in sortedTasks"
+      v-for="task in taskList"
       :task="task"
       :key="task.order"
       class="task-list-item"
       draggable="true"
       @dragstart="dragStartHandler(task)"
       @dragenter="dragEnterHandler(task)"
+      @completeTask="(completedTask) => completeTask(completedTask)"
+      @updateTask="(taskId) => updateTask(taskId)"
+      @deleteTask="(taskId) => deleteTask(taskId)"
     />
   </ul>
 </template>
 
 <script>
-import TaskItem from "@/components/TaskItem"
-import TaskInput from "@/components/UI/TaskInput"
-
+import TaskItem from "./TaskItem"
 export default {
   name: "TaskList",
-  components: { TaskItem, TaskInput },
+  components: { TaskItem },
   props: {
     taskList: {
       type: Object,
@@ -33,17 +33,16 @@ export default {
       draggingTask: null,
     }
   },
+  emits: ["completeTask", "updateTask", "deleteTask"],
   methods: {
-    async addNewTask(taskTitle) {
-      const newTask = {
-        title: taskTitle,
-        description: "",
-        streak: 0,
-        order: this.taskList.length + 1,
-      }
-      await this.$api.dailyTask.create(newTask)
-      // eslint-disable-next-line vue/no-mutating-props
-      this.taskList.push(newTask)
+    completeTask(task) {
+      this.$emit("completeTask", task)
+    },
+    updateTask(id) {
+      this.$emit("updateTask", id)
+    },
+    deleteTask(id) {
+      this.$emit("deleteTask", id)
     },
     dragStartHandler(dragging) {
       this.draggingTask = dragging
@@ -60,25 +59,7 @@ export default {
       }
     },
   },
-  computed: {
-    sortedTasks() {
-      // сортировка по завершенности и порядку
-      // eslint-disable-next-line vue/no-mutating-props,vue/no-side-effects-in-computed-properties
-      return this.taskList.sort((a, b) => {
-        if (b.completed > a.completed) {
-          return -1
-        } else if (b.completed < a.completed) {
-          return 1
-        } else if (a.order < b.order) {
-          return -1
-        } else if (a.order > b.order) {
-          return 1
-        } else {
-          return 0
-        }
-      })
-    },
-  },
+
   watch: {},
 }
 </script>
@@ -90,7 +71,6 @@ export default {
     margin-left: 10px;
     padding: 8px;
     background: rgba(0, 0, 0, 0.1);
-    max-width: 450px;
     transition: 0.3s;
   }
 }

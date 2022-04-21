@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <div class="nav-wrapper cyan lighten-1">
+    <div class="nav-wrapper blue lighten-1">
       <a href="#" class="left m-left-10 brand-logo logo">LOGO</a>
       <div class="left m-left-10">
         {{ filteredDate }}

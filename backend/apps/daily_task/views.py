@@ -12,6 +12,7 @@ from .models import DailyTask, CompletedDailyTask
 
 class DailyTaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DailyTaskDetailSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         user = self.request.user
@@ -20,6 +21,7 @@ class DailyTaskDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class DailyTaskListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = DailyTasklistSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         user = self.request.user
@@ -31,7 +33,7 @@ class DailyTaskListCreateAPIView(generics.ListCreateAPIView):
 
         today = date.today()
         user = self.request.user
-        completed_list = CompletedDailyTask.objects.filter(daily_task__user=user, date_of_completed=today, value=True)
+        completed_list = CompletedDailyTask.objects.filter(value=True, daily_task__user=user, date=today)
         list_with_completed_task_order = []
         for completed in completed_list:
             list_with_completed_task_order.append(completed.daily_task.order)
@@ -46,13 +48,15 @@ class DailyTaskListCreateAPIView(generics.ListCreateAPIView):
 
 class CompletedDailyTaskListAPIView(generics.ListAPIView):
     serializer_class = CompletedDailyTaskListSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         # In this month
         return CompletedDailyTask.objects.filter(
-            date_of_completed__month=date.today().month,
-            date_of_completed__year=date.today().year,
-            date_of_completed__day__gte=1
+            value=True,
+            date__month=date.today().month,
+            date__year=date.today().year,
+            date__day__gte=1
         )
 
 
@@ -64,7 +68,7 @@ class CreateOrUpdateCompletedDailyTaskAPIView(APIView):
         user = request.user
         daily_task = DailyTask.objects.get(user=user, id=request.data["daily_task"])
         try:
-            completed_daily_task = CompletedDailyTask.objects.get(daily_task=daily_task, date_of_completed=date.today())
+            completed_daily_task = CompletedDailyTask.objects.get(daily_task=daily_task, date=date.today())
         except ObjectDoesNotExist:
             completed_daily_task = None
         if completed_daily_task is not None:

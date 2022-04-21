@@ -4,7 +4,7 @@ from django.db import models
 
 from taggit.managers import TaggableManager
 
-from datetime import date
+from datetime import date as _date
 
 
 User = get_user_model()
@@ -28,12 +28,12 @@ class DailyTask(models.Model):
 
 class CompletedDailyTask(models.Model):
     value = models.BooleanField(default=False)
-    date_of_completed = models.DateField(default=date.today)
+    date = models.DateField(default=_date.today)
     daily_task = models.ForeignKey(DailyTask, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = 'date_of_completed', 'daily_task'
+        unique_together = 'date', 'daily_task'
 
     def __str__(self):
-        return f'{self.daily_task.title} | {self.daily_task.user.username} | {self.date_of_completed}'
+        return f'{self.daily_task.title} | {self.daily_task.user.username} | {self.date}'
 

@@ -15,11 +15,8 @@ export default function (instance) {
       return instance.get(`api/v1/daily_task/completed/`)
     },
 
-    read(pk) {
-      return instance.get(`api/v1/daily_task/${pk}/`)
-    },
     update(pk, payload) {
-      return instance.put(`api/v1/daily_task/${pk}/`, payload)
+      return instance.patch(`api/v1/daily_task/${pk}/`, payload)
     },
     delete(pk) {
       return instance.delete(`api/v1/daily_task/${pk}/`)

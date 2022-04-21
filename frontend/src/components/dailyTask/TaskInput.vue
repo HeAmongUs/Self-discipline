@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="task-input">
     <textarea
       ref="textarea"
       rows="1"
       class="textarea"
       placeholder="Добавить ежедневное дело"
       v-model="input"
-      @keydown.enter.prevent="addNewTask"
+      @keydown.enter.prevent="createTask"
     />
   </div>
 </template>
@@ -19,10 +19,10 @@ export default {
       input: "",
     }
   },
-  emits: ["enter"],
+  emits: ["createTask"],
   methods: {
-    addNewTask() {
-      this.$emit("enter", this.input)
+    createTask() {
+      this.$emit("createTask", this.input)
       this.input = ""
       this.$refs.textarea.blur()
     },
@@ -31,6 +31,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.task-input {
+  margin-left: 10px;
+  padding: 8px 8px 0 8px;
+  background: rgba(0, 0, 0, 0.1);
+}
 .textarea {
   width: 100%;
   color: #4e4a57;
