@@ -1,18 +1,20 @@
-# DRF-Simple-JWT-HTTPOnly-cookie
+# ToDo + chart
 
-### Technology in project
+## Technology in project
 Django
+- Django rest framework
+- Simple-JST
 <br>
-rest framework
-<br>
-simple-jwt with httpOnly cookie
-<br>
-Vue3 + axios
-### func
-Sign-in
-<br>
-Logout
-<br>
+Vue3:
+- vue-router
+- vuex
+- axios
 
+## auth
+-login
+-logout
+## ToDo
+- CRUD
+- график за последний месяц в профиле
 
 
