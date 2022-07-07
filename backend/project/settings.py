@@ -26,6 +26,7 @@ INSTALLED_APPS = [
 
     'apps.accounts.apps.AccountsConfig',
     'apps.daily_task',
+    'apps.tasks',
 ]
 
 CORS_ALLOWED_ORIGINS = [

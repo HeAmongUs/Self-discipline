@@ -7,6 +7,11 @@
       @deleteTask="(taskId) => deleteTask(taskId)"
       @completeTask="(task) => completeTask(task)"
     />
+    <div class="btn-wrapper">
+      <div class="my-btn" @click="saveOrder">
+        <my-button>Save order</my-button>
+      </div>
+    </div>
     <modal-window
       v-if="showModal"
       @showModal="showModal = !showModal"
@@ -26,9 +31,16 @@ import TaskList from "./TaskList"
 import TaskInput from "./TaskInput"
 import ModalWindow from "../UI/ModalWindow"
 import DailyTaskUpdateForm from "./DailyTaskUpdateForm"
+import MyButton from "../UI/MyButton"
 export default {
   name: "DailyTaskList",
-  components: { DailyTaskUpdateForm, ModalWindow, TaskInput, TaskList },
+  components: {
+    MyButton,
+    DailyTaskUpdateForm,
+    ModalWindow,
+    TaskInput,
+    TaskList,
+  },
   data() {
     return {
       dailyTaskList: [],
@@ -76,6 +88,11 @@ export default {
       await this.$api.dailyTask.delete(id)
       this.dailyTaskList = this.dailyTaskList.filter((task) => task.id !== id)
     },
+    async saveOrder() {
+      await this.dailyTaskList.forEach((t) => {
+        this.$api.dailyTask.update(t.id, { order: t.order })
+      })
+    },
   },
   computed: {
     sortedTasks() {
@@ -99,6 +116,17 @@ export default {
 </script>
 
 <style scoped>
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.1);
+}
+.my-btn {
+  width: 50%;
+}
 .daily-task-list {
   max-width: 450px;
 }

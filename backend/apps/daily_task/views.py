@@ -32,13 +32,14 @@ class DailyTaskListCreateAPIView(generics.ListCreateAPIView):
         serializer = DailyTasklistSerializer(queryset, many=True)
 
         today = date.today()
-        user = self.request.user
+        user = request.user
+
         completed_list = CompletedDailyTask.objects.filter(value=True, daily_task__user=user, date=today)
-        list_with_completed_task_order = []
+        list_with_completed_task_id = []
         for completed in completed_list:
-            list_with_completed_task_order.append(completed.daily_task.order)
+            list_with_completed_task_id.append(completed.daily_task.id)
         for task in serializer.data:
-            if task["order"] in list_with_completed_task_order:
+            if task["id"] in list_with_completed_task_id:
                 task["completed"] = True
             else:
                 task["completed"] = False

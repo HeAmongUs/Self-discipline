@@ -30,7 +30,7 @@ export default {
 }
 .button {
   position: relative;
-  background: none;
+  background: #fff;
   color: dodgerblue;
   padding: 10px;
   width: 100%;

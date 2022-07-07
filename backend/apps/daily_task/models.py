@@ -4,7 +4,7 @@ from django.db import models
 
 from taggit.managers import TaggableManager
 
-from datetime import date as _date
+from datetime import date
 
 
 User = get_user_model()
@@ -19,16 +19,13 @@ class DailyTask(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     tags = TaggableManager(blank=True)
 
-    class Meta:
-        unique_together = 'user', 'order'
-
     def __str__(self):
         return f'{self.title} | {self.user.username}'
 
 
 class CompletedDailyTask(models.Model):
     value = models.BooleanField(default=False)
-    date = models.DateField(default=_date.today)
+    date = models.DateField(default=date.today)
     daily_task = models.ForeignKey(DailyTask, on_delete=models.CASCADE)
 
     class Meta:
